@@ -1,4 +1,5 @@
 import { useQuery } from "@apollo/client"
+import AuthorForm from "./AuthorForm";
 import { ALL_AUTHORS } from "../queries"
 
 const Authors = () => {
@@ -27,6 +28,7 @@ const Authors = () => {
           ))}
         </tbody>
       </table>
+      <AuthorForm />
     </>
   )
 }
