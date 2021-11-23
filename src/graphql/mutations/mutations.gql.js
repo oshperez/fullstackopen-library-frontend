@@ -19,3 +19,11 @@ export const EDIT_AUTHOR = gql`
     }
   } 
 `
+
+export const LOGIN = gql`
+  mutation login($credentials: CredentialsInput!) {
+    login(credentials: $credentials) {
+      value
+    }
+  }
+`

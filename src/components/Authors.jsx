@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client"
 import AuthorForm from "./AuthorForm";
-import { ALL_AUTHORS } from "../queries"
+import { ALL_AUTHORS } from "graphql/queries/queries.gql"
 
 const Authors = () => {
   const { data, loading } = useQuery(ALL_AUTHORS)
