@@ -8,7 +8,7 @@ import Login from "./components/Login"
 import "./App.css"
 
 function App() {
-  const [currentView, setCurrentView] = useState("authors")
+  const [currentView, setCurrentView] = useState("books")
   const [token, setToken] = useState(null)
   const client = useApolloClient()
 
@@ -16,6 +16,7 @@ function App() {
     setToken(null)
     localStorage.clear()
     client.resetStore()
+    setCurrentView("authors")
   }
 
   return (
