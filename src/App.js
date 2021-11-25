@@ -1,22 +1,45 @@
 import { useState } from "react"
+import { useApolloClient } from "@apollo/client"
 import Authors from "./components/Authors"
 import Books from "./components/Books"
 import BookForm from "./components/BookForm"
+import Login from "./components/Login"
 
 import "./App.css"
 
 function App() {
   const [currentView, setCurrentView] = useState("authors")
+  const [token, setToken] = useState(null)
+  const client = useApolloClient()
+
+  const logout = () => {
+    setToken(null)
+    localStorage.clear()
+    client.resetStore()
+  }
+
   return (
     <div>
-      <button onClick={() => setCurrentView("authors")}>authors</button>
-      <button onClick={() => setCurrentView("books")}>books</button>
-      <button onClick={() => setCurrentView("book_form")}>add book</button>
+      <div style={{marginBottom: 100}}>
+        <button onClick={() => setCurrentView("authors")}>authors</button>
+        <button onClick={() => setCurrentView("books")}>books</button>
+        {token ? (
+          <>
+            <button onClick={() => setCurrentView("add_book")}>add book</button>
+            <button onClick={logout}>logout</button>{" "}
+          </>
+        ) : (
+          <button onClick={() => setCurrentView("login")}>login</button>
+        )}
+      </div>
+
       {currentView === "authors" ? (
         <Authors />
       ) : currentView === "books" ? (
         <Books />
-      ) : currentView === "book_form" ? (
+      ) : currentView === "login" ? (
+        <Login setToken={setToken} setCurrentView={setCurrentView} />
+      ) : currentView === "add_book" ? (
         <BookForm />
       ) : null}
     </div>

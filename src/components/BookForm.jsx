@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { useMutation } from "@apollo/client"
-import { CREATE_BOOK } from "../mutations"
-import { ALL_BOOKS, ALL_AUTHORS } from "../queries"
+import { CREATE_BOOK } from "graphql/mutations/mutations.gql"
+import { ALL_BOOKS, ALL_AUTHORS } from "graphql/queries/queries.gql"
 
-const BookForm = (props) => {
+const BookForm = () => {
   const [book, setBook] = useState({
     title: "",
     author: "",
@@ -13,7 +13,32 @@ const BookForm = (props) => {
   const [genre, setGenre] = useState("")
 
   const [createBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    update: (store, response) => {
+      const booksCachedData = store.readQuery({
+        query: ALL_BOOKS,
+      })
+
+      store.writeQuery({
+        query: ALL_BOOKS,
+        data: {
+          ...booksCachedData,
+          allBooks: [...booksCachedData.allBooks, response.data.addBook],
+        },
+      })
+
+      const authorsCachedData = store.readQuery({
+        query: ALL_AUTHORS,
+      })
+
+      store.writeQuery({
+        query: ALL_AUTHORS,
+        data: {
+          ...authorsCachedData,
+          allAuthors: [...authorsCachedData.allAuthors, response.data.addBook.author],
+        },
+      })
+      
+    },
   })
 
   const handleChange = (e, field) => {
@@ -22,7 +47,6 @@ const BookForm = (props) => {
       [field]:
         field === "published" ? parseInt(e.target.value, 10) : e.target.value,
     }))
-    console.log(book)
   }
 
   const addGenre = (e) => {
@@ -46,7 +70,7 @@ const BookForm = (props) => {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginTop: 50 }}>
+    <form onSubmit={handleSubmit}>
       <div>
         title
         <input value={book.title} onChange={(e) => handleChange(e, "title")} />

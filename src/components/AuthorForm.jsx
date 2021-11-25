@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { useMutation } from "@apollo/client"
 import Select from "react-select"
-import { EDIT_AUTHOR } from "../mutations"
-import { ALL_AUTHORS } from "../queries"
+import { EDIT_AUTHOR } from "graphql/mutations/mutations.gql"
+import { ALL_AUTHORS } from "graphql/queries/queries.gql"
 
 const AuthorForm = ({ authors }) => {
   const [selectedOption, setSelectedOption] = useState(null)
