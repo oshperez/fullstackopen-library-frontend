@@ -21,3 +21,11 @@ export const ALL_BOOKS = gql`
     }
   }
 `
+
+export const LOGGEDIN_USER = gql`
+  query {
+    loggedinUser {
+      favoriteGenre
+    }
+  }
+`

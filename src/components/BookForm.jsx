@@ -13,7 +13,7 @@ const BookForm = () => {
   const [genre, setGenre] = useState("")
 
   const [createBook] = useMutation(CREATE_BOOK, {
-    update: (store, response) => {
+    update: (store, { data }) => {
       const booksCachedData = store.readQuery({
         query: ALL_BOOKS,
       })
@@ -22,7 +22,7 @@ const BookForm = () => {
         query: ALL_BOOKS,
         data: {
           ...booksCachedData,
-          allBooks: [...booksCachedData.allBooks, response.data.addBook],
+          allBooks: [...booksCachedData.allBooks, data.addBook],
         },
       })
 
@@ -34,10 +34,14 @@ const BookForm = () => {
         query: ALL_AUTHORS,
         data: {
           ...authorsCachedData,
-          allAuthors: [...authorsCachedData.allAuthors, response.data.addBook.author],
+          allAuthors: [
+            ...authorsCachedData.allAuthors.filter(
+              (author) => author.name !== data.addBook.author.name
+            ),
+            data.addBook.author,
+          ],
         },
       })
-      
     },
   })
 
