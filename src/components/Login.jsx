@@ -10,6 +10,7 @@ const Login = ({ setToken, setCurrentView }) => {
     onError: (error) => console.log(error.graphQLErrors[0].message),
   })
 
+
   useEffect(() => {
     if (data) {
       const token = data.login.value

@@ -1,11 +1,11 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useApolloClient } from "@apollo/client"
 
 import Authors from "./components/Authors"
 import Books from "./components/Books"
 import BookForm from "./components/BookForm"
 import Login from "./components/Login"
-import Recommendations from "./components/Recommendations";
+import Recommendations from "./components/Recommendations"
 
 import "./App.css"
 
@@ -14,23 +14,32 @@ function App() {
   const [token, setToken] = useState(null)
   const client = useApolloClient()
 
+  useEffect(() => {
+    const token = localStorage.getItem("library-user-token")
+    if (token) {
+      setToken(token)
+    }
+  }, [])
+
   const logout = () => {
     setToken(null)
     localStorage.clear()
-    client.resetStore()
-    setCurrentView("authors")
+    client.clearStore()
+    setCurrentView("books")
   }
 
   return (
     <div>
-      <div style={{marginBottom: 100}}>
+      <div style={{ marginBottom: 100 }}>
         <button onClick={() => setCurrentView("authors")}>authors</button>{" "}
         <button onClick={() => setCurrentView("books")}>books</button>{" "}
         {token ? (
           <>
             <button onClick={() => setCurrentView("add_book")}>add book</button>{" "}
             <button onClick={logout}>logout</button>{" "}
-            <button onClick={() => setCurrentView("recommend")}>recommend</button>{" "}
+            <button onClick={() => setCurrentView("recommend")}>
+              recommend
+            </button>{" "}
           </>
         ) : (
           <button onClick={() => setCurrentView("login")}>login</button>

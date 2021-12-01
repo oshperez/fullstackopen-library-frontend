@@ -1,22 +1,22 @@
-import { useState, useEffect } from "react"
-import { useQuery, useApolloClient } from "@apollo/client"
-import { LOGGEDIN_USER, ALL_BOOKS } from "graphql/queries/queries.gql"
+import { useQuery, useLazyQuery } from "@apollo/client"
+import { ALL_BOOKS, LOGGEDIN_USER } from "graphql/queries/queries.gql"
+import { useEffect } from "react"
 
-const Recommendations = () => {
-  const [books, setBooks] = useState([])
-  const { loading, error, data } = useQuery(LOGGEDIN_USER)
-  const client = useApolloClient()
+const Recommendations = ({ user }) => {
+  const { data: dataFromUser } = useQuery(LOGGEDIN_USER)
 
-  const cachedBooks = client.readQuery({
-    query: ALL_BOOKS,
-  })
+  const [getFavoriteBooks, { error, loading, data }] = useLazyQuery(ALL_BOOKS)
 
   useEffect(() => {
-    setBooks(cachedBooks.allBooks)
-  }, [cachedBooks])
+    if (dataFromUser?.loggedinUser) {
+      getFavoriteBooks({
+        variables: { genres: [dataFromUser.loggedinUser.favoriteGenre] },
+      })
+    }
+  }, [dataFromUser, getFavoriteBooks])
 
-  if (loading) return <div>Loading...</div>
-  if (error) console.log(error.message)
+  if (loading) return <div>loading</div>
+  if (error) return <div>{error.message}</div>
 
   return (
     <div>
@@ -33,17 +33,13 @@ const Recommendations = () => {
           </tr>
         </thead>
         <tbody>
-          {books
-            .filter((book) =>
-              book.genres.includes(data.loggedinUser.favoriteGenre)
-            )
-            .map((book) => (
-              <tr key={book.title}>
-                <td>{book.title}</td>
-                <td>{book.author.name}</td>
-                <td>{book.published}</td>
-              </tr>
-            ))}
+          {data?.allBooks.map((book) => (
+            <tr key={book.title}>
+              <td>{book.title}</td>
+              <td>{book.author.name}</td>
+              <td>{book.published}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

@@ -18,30 +18,34 @@ const BookForm = () => {
         query: ALL_BOOKS,
       })
 
-      store.writeQuery({
-        query: ALL_BOOKS,
-        data: {
-          ...booksCachedData,
-          allBooks: [...booksCachedData.allBooks, data.addBook],
-        },
-      })
+      if (booksCachedData) {
+        store.writeQuery({
+          query: ALL_BOOKS,
+          data: {
+            ...booksCachedData,
+            allBooks: [...booksCachedData.allBooks, data.addBook],
+          },
+        })
+      }
 
       const authorsCachedData = store.readQuery({
         query: ALL_AUTHORS,
       })
 
-      store.writeQuery({
-        query: ALL_AUTHORS,
-        data: {
-          ...authorsCachedData,
-          allAuthors: [
-            ...authorsCachedData.allAuthors.filter(
-              (author) => author.name !== data.addBook.author.name
-            ),
-            data.addBook.author,
-          ],
-        },
-      })
+      if (authorsCachedData) {
+        store.writeQuery({
+          query: ALL_AUTHORS,
+          data: {
+            ...authorsCachedData,
+            allAuthors: [
+              ...authorsCachedData.allAuthors.filter(
+                (author) => author.name !== data.addBook.author.name
+              ),
+              data.addBook.author,
+            ],
+          },
+        })
+      }
     },
   })
 
