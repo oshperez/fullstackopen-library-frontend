@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useApolloClient } from "@apollo/client"
+import { useApolloClient, useSubscription } from "@apollo/client"
 
 import Authors from "./components/Authors"
 import Books from "./components/Books"
@@ -7,12 +7,23 @@ import BookForm from "./components/BookForm"
 import Login from "./components/Login"
 import Recommendations from "./components/Recommendations"
 
+import { BOOK_ADDED } from "graphql/subscriptions/subscriptions.gql"
+
 import "./App.css"
 
 function App() {
   const [currentView, setCurrentView] = useState("books")
   const [token, setToken] = useState(null)
   const client = useApolloClient()
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const {
+        data: { bookAdded },
+      } = subscriptionData
+      window.alert(`${bookAdded.title} by ${bookAdded.author.name} was added`)
+    },
+  })
 
   useEffect(() => {
     const token = localStorage.getItem("library-user-token")
