@@ -3,8 +3,10 @@ import { gql } from "@apollo/client"
 export const CREATE_BOOK = gql`
   mutation createBook($book: BookInput!) {
     addBook(bookObj: $book) {
+      id
       title
       author {
+        id
         name
         born
         bookCount
@@ -18,7 +20,9 @@ export const CREATE_BOOK = gql`
 export const EDIT_AUTHOR = gql`
   mutation editAuthor($author: String!, $birthyear: Int!) {
     editAuthor(name: $author, setBornTo: $birthyear) {
+      id
       name
+      bookCount
       born
     }
   }

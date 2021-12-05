@@ -9,6 +9,12 @@ import Recommendations from "./components/Recommendations"
 
 import { BOOK_ADDED } from "graphql/subscriptions/subscriptions.gql"
 
+import {
+  updateBookCache,
+  updateAuthorCache,
+  updateRecommendationCache,
+} from "utils/helpers/cache.helper"
+
 import "./App.css"
 
 function App() {
@@ -21,6 +27,11 @@ function App() {
       const {
         data: { bookAdded },
       } = subscriptionData
+
+      updateBookCache(bookAdded)
+      updateAuthorCache(bookAdded.author)
+      updateRecommendationCache(bookAdded)
+
       window.alert(`${bookAdded.title} by ${bookAdded.author.name} was added`)
     },
   })
@@ -41,7 +52,7 @@ function App() {
 
   return (
     <div>
-      <div style={{ marginBottom: 100 }}>
+      <div style={{ marginBottom: 50 }}>
         <button onClick={() => setCurrentView("authors")}>authors</button>{" "}
         <button onClick={() => setCurrentView("books")}>books</button>{" "}
         {token ? (

@@ -2,78 +2,27 @@ import { useState } from "react"
 import { useMutation } from "@apollo/client"
 
 import { CREATE_BOOK } from "graphql/mutations/mutations.gql"
+
 import {
-  ALL_BOOKS,
-  ALL_AUTHORS,
-  LOGGEDIN_USER,
-} from "graphql/queries/queries.gql"
+  updateBookCache,
+  updateAuthorCache,
+  updateRecommendationCache,
+} from "utils/helpers/cache.helper"
 
 const BookForm = () => {
   const [book, setBook] = useState({
     title: "",
     author: "",
-    published: null,
+    published: "",
     genres: [],
   })
   const [genre, setGenre] = useState("")
 
   const [createBook] = useMutation(CREATE_BOOK, {
     update: (store, { data }) => {
-      const booksCachedData = store.readQuery({
-        query: ALL_BOOKS,
-      })
-
-      if (booksCachedData) {
-        store.writeQuery({
-          query: ALL_BOOKS,
-          data: {
-            ...booksCachedData,
-            allBooks: [...booksCachedData.allBooks, data.addBook],
-          },
-        })
-      }
-
-      const authorsCachedData = store.readQuery({
-        query: ALL_AUTHORS,
-      })
-
-      if (authorsCachedData) {
-        store.writeQuery({
-          query: ALL_AUTHORS,
-          data: {
-            ...authorsCachedData,
-            allAuthors: [
-              ...authorsCachedData.allAuthors.filter(
-                (author) => author.name !== data.addBook.author.name
-              ),
-              data.addBook.author,
-            ],
-          },
-        })
-      }
-
-      const userCachedData = store.readQuery({
-        query: LOGGEDIN_USER,
-      })
-
-      if (
-        userCachedData &&
-        data.addBook.genres.includes(userCachedData.loggedinUser.favoriteGenre)
-      ) {
-        const recommendedBooks = store.readQuery({
-          query: ALL_BOOKS,
-          variables: { genres: [userCachedData.loggedinUser.favoriteGenre] },
-        })
-        if (recommendedBooks) {
-          store.writeQuery({
-            query: ALL_BOOKS,
-            variables: { genres: [userCachedData.loggedinUser.favoriteGenre] },
-            data: {
-              allBooks: [...recommendedBooks.allBooks, data.addBook],
-            },
-          })
-        }
-      }
+      updateBookCache(data.addBook)
+      updateAuthorCache(data.addBook.author)
+      updateRecommendationCache(data.addBook)
     },
   })
 

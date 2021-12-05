@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useMutation } from "@apollo/client"
 import Select from "react-select"
 import { EDIT_AUTHOR } from "graphql/mutations/mutations.gql"
-import { ALL_AUTHORS } from "graphql/queries/queries.gql"
+import { updateAuthorCache } from "utils/helpers/cache.helper"
 
 const AuthorForm = ({ authors }) => {
   const [selectedOption, setSelectedOption] = useState(null)
@@ -14,7 +14,9 @@ const AuthorForm = ({ authors }) => {
   }))
 
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
-    refetchQueries: [{ query: ALL_AUTHORS }],
+    update: (_, { data }) => {
+      updateAuthorCache(data.editAuthor)
+    },
   })
 
   const handleSubmit = (e) => {
