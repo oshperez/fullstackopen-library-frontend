@@ -1,18 +1,11 @@
 import { gql } from "@apollo/client"
+import { BOOK_DETAILS } from "graphql/fragments/fragments.gql"
 
 export const BOOK_ADDED = gql`
+  ${BOOK_DETAILS}
   subscription {
     bookAdded {
-      id
-      title
-      author {
-        id
-        name
-        born
-        bookCount
-      }
-      published
-      genres
+      ...BookDetails
     }
   }
 `
